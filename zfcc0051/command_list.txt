@@ -1,0 +1,26 @@
+#16S blast
+blastn -query sanger.fna -db NCBI bacteria.16SrRNA.fna -out sanger_results.txt -evalue 1 -outfmt "6 qseqid sseqid evalue bitscore pident stitle" -num_alignments 1 -num_threads 80
+
+#assembly and annotation
+
+#quality control reads 
+fastq-mcf -q 25 -l 100  adapter.fa read1.fastq.gz read2.fastq.gz -o read1_out.fastq -o read2_out.fastq
+
+#assemble
+spades.py -t 15 -1 read1_out.fastq -2 read2_out.fastq -o assembly/
+
+#find genes
+prodigal -i contigs.fasta assembly_genes.faa -a -d assembly_genes.fna -p single -m -s assembly_genes_all.txt  -f gff -o assembly_genes.gff
+
+#activate conda environment for checkm 
+conda activate checkm-genome
+
+# identify marker genes
+checkm analyze 40_conserved_marker.hmm contigs.fasta checkm_out -x .fasta 
+
+#assess completeness
+checkm qa 40_conserved_marker.hmm checkm_out -o 1 > genome_checkm.txt
+
+#fastANI
+
+fastANI -q contigs.fasta -r GCA_900087055.1_31289_E01_genomic.fa -o result.txt
