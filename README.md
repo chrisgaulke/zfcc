@@ -11,8 +11,10 @@ Each subdirectory contains a set of files for a defined isolate.
 File naming
 -----------
 
-software version list: software.txt 
+software version list: software.txt
+
 commands list: commands.txt
+
 citation: citation.txt
 
  ***software version list*** : list of the software used and the version
